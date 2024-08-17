@@ -1,17 +1,38 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+function Username() {
+  const [pokemons, setPokemons] = useState([]);
+  const [loading, setLoading] = useState(true); 
+  useEffect(() => {
+    fetch('https://pokeapi.co/api/v2/pokemon')
+      .then(response => response.json())
+      .then(data => {
+        setPokemons(data.results);  
+        setLoading(false);  
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setLoading(false); 
+      });
+  }, []);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div>
+      <h1>List out  the Pokiman Character names</h1>
+      <ul>
+        {pokemons.map((pokemon, index) => (
+          <li key={index}>{pokemon.name}</li>  
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+ReactDOM.render(<Username />, document.getElementById('root'));
+
